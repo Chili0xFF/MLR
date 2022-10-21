@@ -51,7 +51,7 @@ from fpdf import FPDF
 class PDF(FPDF):
      def imagex(self,name):
         self.set_xy(6.0,6.0)
-        self.image(name,  link='', type='', w=1586/80, h=1920/80)
+        self.image(name,  link='', type='')
 #######################
 # A. Wczytanie danych #
 #######################
@@ -75,7 +75,7 @@ plik.close()
 
 ### ZADANIE (0.5p.) ###
 # Dane w listach są ułożone od najnowszych do najstarszych.
-# Odwrócić dane na listach tak, żeby były ułożone chronologicznie.
+# Odwrócić dane na listach tak, żeby były ułożone chronologicznie.                            DONE 0.5
 ### KONIEC ###
 
 przeplyw.reverse();
@@ -129,7 +129,7 @@ for nazwa,zmienna in zmienne.items():
 
 # Zidentyfikowaliśmy problem - "dziwne", znacząco za duże niektóre wartości dla zmiennych:
 
-# Przeniesione do linijki 111
+# Przeniesione do linijki 111                                                            DONE 1.0
 
 
 ### ZADANIE (1p.) ###
@@ -140,13 +140,14 @@ for nazwa,zmienna in zmienne.items():
 print("\nCZYSZCZENIE DANYCH")
 
 for nazwa,zmienna in zmienne_do_naprawienia.items():
+    q1 = np.quantile(zmienna,0.25)
+    q3 = np.quantile(zmienna,0.75)
+    iqr = q3 - q1
     for index,wartosc in enumerate(zmienna): # Iterujemy po wszystkich obserwacjach
         # Zakładamy (na podstawie analizy danych), że anomalia to wartość powyżej 10000
-        q1 = np.quantile(zmienna,0.25)
-        q3 = np.quantile(zmienna,0.75)
-        iqr = q3 - q1
         
-        if (wartosc > q3+(3.5*iqr)):
+        
+        if (wartosc > q3+(3.5*iqr) or wartosc<q1-(3.5*iqr)):
             print("Dla zmiennej {} pod indeksem {} znaleziono anomalię o wartości {}".format(nazwa, index, wartosc))
             # Wstawiamy medianę:
             mediana = np.median(zmienna)
@@ -155,7 +156,7 @@ for nazwa,zmienna in zmienne_do_naprawienia.items():
 
 ### ZADANIE (1p.) ###
 # Znaleźć inną metodę wyznaczania progu anomalii w powyższej pętli tak, aby nie była to
-# "hardkodowana" wartość 10000, ale liczba wyznaczana indywidualnie dla każdej zmiennej.
+# "hardkodowana" wartość 10000, ale liczba wyznaczana indywidualnie dla każdej zmiennej.                      DONE 1.0
 # Jedna z metod - metoda IQR: https://online.stat.psu.edu/stat200/lesson/3/3.2
 # Inna podpowiedź: https://mateuszgrzyb.pl/3-metody-wykrywania-obserwacji-odstajacych-w-python/ 
 ### KONIEC ###
@@ -185,11 +186,11 @@ for nazwa,zmienna in zmienne.items():
     
     
     pdf.imagex(nazwa+".png")
-    pdf.output()
+    pdf.output(nazwa+".pdf")
 
 ### ZADANIE (1p.) ###
-# Zapisać powyższe statystyki i wykresy do plików PDF, osobnych dla poszczególnych zmiennych
-# (można wykorzystać dowolną metodę/moduł/bibliotekę/pakiet).
+# Zapisać powyższe statystyki i wykresy do plików PDF, osobnych dla poszczególnych zmiennych               DONE 1.0
+# (można wykorzystać dowolną metodę/moduł/bibliotekę/pakiet).                                                
 ### KONIEC ###
 
 
@@ -216,7 +217,7 @@ def ncorrelate(a,b):
 
 ### ZADANIE (0.5p.) ###
 # Poszukać funkcji z pakietu numpy, która wykonuje identyczne zadanie jak
-# funkcja ncorrelate() i ją wykorzystać.
+# funkcja ncorrelate() i ją wykorzystać.                                                                 
 ### KONIEC ###
 
 # Badamy korelacje między wszystkimi (różnymi od siebie) zmiennymi
@@ -225,6 +226,13 @@ for nazwa1,zmienna1 in zmienne.items():
         if nazwa1 != nazwa2:
             print("Korelacja między", nazwa1,"a", nazwa2,"wynosi:", end=" ")
             print(ncorrelate(zmienna1,zmienna2))
+
+for nazwa1,zmienna1 in zmienne.items():
+    for nazwa2,zmienna2 in zmienne.items():
+        if nazwa1 != nazwa2:                                                              
+            print("Korelacja numpy między", nazwa1,"a", nazwa2,"wynosi:", end=" ")        #DONE 0.5 (Just in case gdyby któres inne było poniżej oczekiwań)
+            print(np.corrcoef(zmienna1,zmienna2)[0][1])                                      
+
 
 ### ZADANIE (1p.) ###
 # Zebrać powyższe wyniki korelacji w dwuwymiarowej liście postaci:
@@ -293,10 +301,10 @@ plt.show()
 # Analiza przeprowadzona tylko dla jednej zmiennej, temp_zasilania
 
 print()
-print("REGRESJA LINIOWA")
+print("REGRESJA LINIOWA OD STYCZNIA DO KWIETNIA")
 # Wybieramy zmienną temp_zasilania w funkcji numeru obserwacji
-x = range(len(temp_zasilania))
-y = temp_zasilania
+x = range(int(len(temp_zasilania)/3))
+y = temp_zasilania[0:int(len(temp_zasilania)/3)]
 # Liczymy współczynniki regresji - prostej
 a,b = np.polyfit(x,y,1)  # Wielomian 1 rzędu - prosta
 print("Wzór prostej: y(x) =",a,"* x +",b)
@@ -305,7 +313,43 @@ yreg =  [a*i + b for i in x]
 # Wykresy
 plt.plot(x,y, label="Temperatura zasilania")
 plt.plot(x,yreg, label="Wynik regresji")
-plt.title("Regresja liniowa dla całosci danych zmiennej temp_zasilania")
+plt.title("Regresja liniowa OD STYCZNIA DO KWIETNIA zmiennej temp_zasilania")
+plt.xlabel('Numer obserwacji')
+plt.legend()
+plt.show()
+
+print()
+print("REGRESJA LINIOWA OD MAJA DO SIERPNIA")
+# Wybieramy zmienną temp_zasilania w funkcji numeru obserwacji
+x = range(int(len(temp_zasilania)/3),int(len(temp_zasilania)/3*2))
+y = temp_zasilania[int(len(temp_zasilania)/3):int(len(temp_zasilania)/3*2)]
+# Liczymy współczynniki regresji - prostej
+a,b = np.polyfit(x,y,1)  # Wielomian 1 rzędu - prosta
+print("Wzór prostej: y(x) =",a,"* x +",b)
+# Wyliczamy punkty prostej otrzymanej w wyniku regresji
+yreg =  [a*i + b for i in x]
+# Wykresy
+plt.plot(x,y, label="Temperatura zasilania")
+plt.plot(x,yreg, label="Wynik regresji")
+plt.title("Regresja liniowa OD MAJA DO SIERPNIA zmiennej temp_zasilania")
+plt.xlabel('Numer obserwacji')
+plt.legend()
+plt.show()
+
+print()
+print("REGRESJA LINIOWA OD WRZEŚNIA DO GRUDNIA")
+# Wybieramy zmienną temp_zasilania w funkcji numeru obserwacji
+x = range(int(len(temp_zasilania)/3*2),len(temp_zasilania))
+y = temp_zasilania[int(len(temp_zasilania)/3*2):len(temp_zasilania)]
+# Liczymy współczynniki regresji - prostej
+a,b = np.polyfit(x,y,1)  # Wielomian 1 rzędu - prosta
+print("Wzór prostej: y(x) =",a,"* x +",b)
+# Wyliczamy punkty prostej otrzymanej w wyniku regresji
+yreg =  [a*i + b for i in x]
+# Wykresy
+plt.plot(x,y, label="Temperatura zasilania")
+plt.plot(x,yreg, label="Wynik regresji")
+plt.title("Regresja liniowa OD WRZEŚNIA DO GRUDNIA zmiennej temp_zasilania")
 plt.xlabel('Numer obserwacji')
 plt.legend()
 plt.show()
@@ -324,15 +368,15 @@ yreg =  [a*i*i + b*i + c for i in x]
 # Wykresy
 plt.plot(x,y, label="Temperatura zasilania")
 plt.plot(x,yreg, label="Wynik regresji")
-plt.title("Regresja liniowa dla całosci danych zmiennej temp_zasilania")
+plt.title("Regresja wielomianowa dla całosci danych zmiennej temp_zasilania")
 plt.xlabel('Numer obserwacji')
 plt.legend()
 plt.show()
 
 ### ZADANIE (1.5p.) ###
 # Z wykresu widać, że regresja liniowa dla całości zmiennej temp_zasilania słabo się sprawdza.
-# Wynika to z tego, że inaczej dane rozkładają się w róznych porach roku.
-# Należy więc podzielić dane na kilka podzakresów i regresję wykonać osobno
+# Wynika to z tego, że inaczej dane rozkładają się w róznych porach roku. 
+# Należy więc podzielić dane na kilka podzakresów i regresję wykonać osobno                              DONE 1.5
 # dla każdego z podzakresu. Narysować odpowiedni wykres.
 ### KONIEC ###
 
