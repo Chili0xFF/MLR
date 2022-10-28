@@ -1,0 +1,26 @@
+Hypotheses:
+  - name: Wygra drużyna Gigachad United
+    prob:
+    - 0.5
+  - name: Wygra drużyna Allergy Club
+    prob:
+    - 0.3
+  - name: Będzie remis
+    prob:
+    - 0.2
+Facts: 
+  - name: Drużyna A jest wypoczęta
+    prob: 
+    - 0.8
+    - 0.2
+    - 0.2
+  - name: Drużyna B jest wypoczęta
+    prob: 
+    - 0.2
+    - 0.8
+    - 0.2
+  - name: Trawa jest świeżo skoszona
+    prob: 
+    - 0.8
+    - 0.1
+    - 0.3
