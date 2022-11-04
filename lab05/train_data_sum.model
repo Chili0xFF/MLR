@@ -1,0 +1,7 @@
+activation: tanh
+max_val: 10.0
+min_val: 0.0
+nin: 2
+weights:
+- 1.1302634471882351
+- 1.4617348115521684
