@@ -1,0 +1,2 @@
+python -m venv mlr_pj
+mlr_pj\Scripts\activate
