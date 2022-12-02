@@ -1,0 +1,4 @@
+khan academy -> fajny tutorial do tego zadania
+książka -> Neural networks from Scratch in Python
+
+dowolne dane, na przykład te z fortrana albo te z dodawaniem
