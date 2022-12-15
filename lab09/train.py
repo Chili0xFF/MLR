@@ -4,7 +4,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 import tensorflow as tf
 import matplotlib.pyplot as plt
-EPOCHS = 5
+EPOCHS = 15
 MODEL_FILENAME = "model.h5"
 NO_OF_CLASSES = 10
 VAL_SPLIT = 0.2
