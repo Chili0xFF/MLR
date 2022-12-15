@@ -3,8 +3,8 @@
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 import tensorflow as tf
-
-EPOCHS = 10
+import matplotlib.pyplot as plt
+EPOCHS = 5
 MODEL_FILENAME = "model.h5"
 NO_OF_CLASSES = 10
 VAL_SPLIT = 0.2
@@ -45,13 +45,29 @@ if __name__ == "__main__":
     # Compile the model and print summary
     model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
     model.summary()
-
+    
     # Train the model
-    model.fit(x=x_train, y=y_train, epochs=EPOCHS, validation_split=VAL_SPLIT)
-
+    archive = model.fit(x=x_train, y=y_train, epochs=EPOCHS, validation_split=VAL_SPLIT)
+    print(archive.history.keys())
+    print(archive.history['loss'])
+    print(archive.history['accuracy'])
+    loss=archive.history['loss']
+    accuracy=archive.history['accuracy']
+    plt.plot(loss)
+    plt.title('Result')
+    plt.xlabel('Epoch')
+    plt.ylabel('Loss')
+    plt.savefig('loss.png')
+    plt.show()
+    plt.plot(accuracy)
+    plt.title('Resul')
+    plt.xlabel('Epoch')
+    plt.ylabel('Accuracy')
+    plt.savefig('accuracy.png')
+    plt.show()
     # Save model to a file
     model.save(MODEL_FILENAME)
-
+    
     # Evaluate the model on the test data
     model.evaluate(x_test, y_test)
 
