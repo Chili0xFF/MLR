@@ -1,0 +1,18 @@
+lenet5_noaugment_100 -> 98.74
+lenet5_noaugment_50 -> 98.85
+lenet5_noaugment_20 -> 98.48
+lenet5_noaugment_10 -> 98.49
+lenet5_augment_100-> 98.97
+lenet5_augment_50->98.66
+lenet5_augment_20->98.57
+lenet5_augment_10->98.43
+fc_noaugment_100->97.17
+fc_noaugment_50->97.29
+fc_noaugment_20->97.21
+fc_noaugment_10->97.16
+fc_augment_100->96.92
+fc_augment_50->96.47
+fc_augment_20->95.94
+fc_augment_10->95.42
+
+

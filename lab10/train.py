@@ -10,29 +10,29 @@ import argparse
 from timeit import default_timer as timer
 
 # Default values (suitable for MNIST)
-MODEL_FILENAME = "model"
+MODEL_FILENAME = "lenet5_augment_100"
 NN_TYPE = "lenet5"
-EPOCHS = 10
+EPOCHS = 100
 CLASSES = 10
 BATCH_SIZE = 32
 TRAIN_VALIDATION_SPLIT = 0.2
 OPTIMIZER = 'adam'
 LOSS = 'categorical_crossentropy'
 IMAGE_DIMENSIONS = (28, 28, 1)
-DO_AUGMENTATION = False
+DO_AUGMENTATION = True
 FC_HIDDEN_UNITS = 50
-RANDOM_SEED = 100
+RANDOM_SEED = 23049
 
 # Construct the argument parser and parse the input arguments
 ap = argparse.ArgumentParser()
-ap.add_argument("-m", "--model", required=False, 
+ap.add_argument("-m", "--model", required=False,
                 help="output model file name (extension .h5 will be added)",
                 default=MODEL_FILENAME, metavar="filename")
-ap.add_argument("-n", "--network", required=False, choices=['fc', 'lenet5'], 
+ap.add_argument("-n", "--network", required=False, choices=['fc', 'lenet5'],
                 help="network architecture", default=NN_TYPE)
 ap.add_argument("-e", "--epochs", required=False, type=int, help="number of epochs",
                 default=EPOCHS, metavar='int')
-ap.add_argument("-a", "--augmentation", required=False, action='store_true', 
+ap.add_argument("-a", "--augmentation", required=False, action='store_true',
                 help="enable augmentations", default=DO_AUGMENTATION)
 
 args = vars(ap.parse_args())
@@ -62,6 +62,12 @@ if do_augmentation:
                                 test_size = TRAIN_VALIDATION_SPLIT,
                                 random_state=RANDOM_SEED)
 
+# Reshape the dataset into 4D array (required by Keras)
+x_train = x_train.reshape(x_train.shape[0], *IMAGE_DIMENSIONS)
+x_test = x_test.reshape(x_test.shape[0], *IMAGE_DIMENSIONS)
+if do_augmentation:
+    x_valid = x_valid.reshape(x_valid.shape[0], *IMAGE_DIMENSIONS)
+
 # Construct the model
 if nn_type == "fc":
     model = nn.FullyConnectedForMnist.build(FC_HIDDEN_UNITS)
@@ -84,7 +90,7 @@ start_time = timer()
 if do_augmentation:
     # Make the real-time augmentations
     h = model.fit(aug.flow(x_train, y_train, batch_size=BATCH_SIZE),
-                  epochs=epochs, steps_per_epoch=len(x_train)/BATCH_SIZE, 
+                  epochs=epochs, steps_per_epoch=len(x_train)/BATCH_SIZE,
                   validation_data=(x_valid, y_valid))
 else:
     h = model.fit(x_train, y_train, epochs=epochs, batch_size=BATCH_SIZE,
