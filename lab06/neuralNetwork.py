@@ -29,6 +29,8 @@ class NeuralNetwork:
         self.B2=np.random.rand(10,1)-0.5
         #InitialSetup
         self.learningRate = learningRate
+        self.momentum=[1,1,1,1]
+        self.averagesOfMomentumHistories=[1,1,1,1]     #0=W1, 1=W2, 2=B1, 3=B2
         self.amountOfOutcomes=amountOfOutcomes
     def forwardPropagation(self,X,Y):
         self.Z1=(self.W1 @ X) + self.B1           #Array X Array, + biases to matching neurons
@@ -37,7 +39,7 @@ class NeuralNetwork:
         self.A2 = softMax(self.Z2)              #Turns values of Z to numbers between 0 and 1
     def backPropagation(self,X,Y):
         oneHotY = oneHot(Y)                     #Create a oneHot array
-        #calculate how "wrong" and "unsure" our network was
+        #calculate how much off our biases and weights were, according to people smarter than me
         self.dZ2 = self.A2 - oneHotY
         self.dW2 = 1 / m * self.dZ2 @ self.A1.T
         self.db2 = 1 / m * np.sum(self.dZ2)
@@ -45,25 +47,22 @@ class NeuralNetwork:
         self.dW1 = 1 / m * self.dZ1 @ X.T
         self.db1 = 1 / m * np.sum(self.dZ1)
     def updateParameters(self):
-        self.W1-=(self.learningRate*self.dW1)
-        self.B1-=(self.learningRate*self.db1)
-        self.W2-=(self.learningRate*self.dW2)
-        self.B2-=(self.learningRate*self.db2)
+        self.W1-=(self.learningRate*self.dW1*self.momentum[0])
+        print("dW1: "+(str)(np.amax(self.dW1)))
+        self.W2-=(self.learningRate*self.dW2*self.momentum[1])
+        self.B1-=(self.learningRate*self.db1*self.momentum[2])
+        self.B2-=(self.learningRate*self.db2*self.momentum[3])
     def gradientDescent(self,iterations,X,Y):
         for i in range(iterations):
             self.forwardPropagation(X,Y)
             self.backPropagation(X, Y)
             self.updateParameters()
-            if i % 10 == 0:
-                print("Iteration: ", i)
-                predictions = get_predictions(self.A2)
-                print(get_accuracy(predictions, Y))
     def testing(self,X,Y,index):
         self.forwardPropagation(X,Y)
         prediction = get_predictions(self.A2)[index]
         label = Y[index]
-        print(label)
-        print(prediction)
+        print("Actual: "+(str)(label))
+        print("Predicted: "+(str)(prediction))
         image = X[:, index]
         image = image.reshape((28, 28)) * 255
         plt.imshow(image)
@@ -87,16 +86,15 @@ Xtrain = dataTrain[1:n]
 Xtrain = Xtrain/255.
 
 #InitializeNeuralNetwork
-iterations=2
+iterations=200
 network = NeuralNetwork(784,10,10,0.10)
 #RunTheAlgorithm
 network.gradientDescent(iterations,Xtrain,Ytrain)
 #Testing
-print("TESTING IN PROGRESS")
-print("TESTING IN PROGRESS")
-print("TESTING IN PROGRESS")
-print("TESTING IN PROGRESS")
-print("TESTING IN PROGRESS")
-print("TESTING IN PROGRESS")
+print("TESTING IN 5")
+print("TESTING IN 4")
+print("TESTING IN 3")
+print("TESTING IN 2")
+print("TESTING IN 1")
 print("TESTING IN PROGRESS")
 network.testing(Xtest,Ytest,1)
